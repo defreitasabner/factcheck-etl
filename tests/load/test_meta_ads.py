@@ -24,13 +24,13 @@ def test_save_to_bronze(tmp_path, monkeypatch):
     files = list(expected_path.glob('*.json'))
     assert len(files) == 2, f"Expected 2 files, found {len(files)}"
     
-    filename = files[0].name
-    assert filename.startswith(f'meta_ads_{ad_type}_{query}_')
-    assert filename.endswith('.json')
+    assert files[0].name.startswith(f'meta_ads_{ad_type}_{query}_') and files[1].name.startswith(f'meta_ads_{ad_type}_{query}_')
+    assert files[0].name.endswith('.json') and files[1].name.endswith('.json')
     
-    timestamp_part = filename.replace(f'meta_ads_{ad_type}_{query}_', '').replace('.json', '')
-    assert len(timestamp_part) == 15, f"Expected timestamp format YYYYMMDD_HHMMSS, got {timestamp_part}"
+    
+    assert  len(files[0].name.replace(f'meta_ads_{ad_type}_{query}_', '').replace('.json', '').replace('_metadata', '')) == 15 \
+        and  len(files[1].name.replace(f'meta_ads_{ad_type}_{query}_', '').replace('.json', '').replace('_metadata', '')) == 15 \
+            , f"Expected timestamp format YYYYMMDD_HHMMSS got {files[0].name} and {files[1].name}"
 
-    metadata_filename = files[1].name
-    assert metadata_filename.startswith(f'meta_ads_{ad_type}_{query}_')
-    assert metadata_filename.endswith('_metadata.json')
+    assert files[0].name.endswith('_metadata.json') \
+        or files[1].name.endswith('_metadata.json'), "At least one file should be metadata"
